@@ -39,7 +39,7 @@ def main():
 
 
 def launchBrowser():    
-    subprocess.call("sudo bash /home/pi/launchBrowser.sh", shell=True)
+    subprocess.call("sudo bash /home/pi/Documents/smartDashboard/launchBrowser.sh", shell=True)
 
 def isMonitorRunning():
     status = subprocess.check_output("tvservice -s", shell=True).decode("utf-8")
@@ -50,10 +50,10 @@ def isMonitorRunning():
         return True
 
 def wakeScreen():
-    subprocess.call("sudo bash /home/pi/wakeMonitor.sh", shell=True)
+    subprocess.call("sudo bash /home/pi/Documents/smartDashboard/wakeMonitor.sh", shell=True)
 
 def sleepScreen():
-    subprocess.call("sudo bash /home/pi/sleepMonitor.sh", shell=True)
+    subprocess.call("sudo bash /home/pi/Documents/smartDashboard/sleepMonitor.sh", shell=True)
 
 def refreshScreen():
     global lastRefreshTime
