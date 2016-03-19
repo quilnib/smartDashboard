@@ -15,6 +15,7 @@ def main():
     global lastMotionTime
     global lastRefreshTime
 
+    setDisplay()
     launchBrowser()
 
     time.sleep(10.0)#let the browser finish launching before checking for activity
@@ -30,16 +31,16 @@ def main():
                 refreshScreen()
                 #lastRefreshTime = time.time()
         else:
-            print("nothing to see here")
+            print("no movement registered")
             #if the screen is on, and there has been no activity for a period of time, turn off screen
             if (lastMotionTime + sleepInterval)< time.time() and isMonitorRunning():
                 sleepScreen()
-            #os.system("xset s activate")
         time.sleep(5.0)
 
 
-def launchBrowser():    
-    subprocess.call("sudo bash /home/pi/Documents/smartDashboard/launchBrowser.sh", shell=True)
+def launchBrowser():
+    setDisplay()    
+    subprocess.call("bash /home/pi/Documents/smartDashboard/launchBrowser.sh", shell=True)
 
 def isMonitorRunning():
     status = subprocess.check_output("tvservice -s", shell=True).decode("utf-8")
@@ -50,16 +51,22 @@ def isMonitorRunning():
         return True
 
 def wakeScreen():
-    subprocess.call("sudo bash /home/pi/Documents/smartDashboard/wakeMonitor.sh", shell=True)
+    print("waking screen")
+    setDisplay()
+    subprocess.call("bash /home/pi/Documents/smartDashboard/wakeMonitor.sh", shell=True)
 
 def sleepScreen():
-    subprocess.call("sudo bash /home/pi/Documents/smartDashboard/sleepMonitor.sh", shell=True)
+    print("sleeping screen")
+    setDisplay()
+    subprocess.call("bash /home/pi/Documents/smartDashboard/sleepMonitor.sh", shell=True)
 
 def refreshScreen():
     global lastRefreshTime
     subprocess.call("xte 'key F5'", shell=True)
     lastRefreshTime = time.time()
 
+def setDisplay():
+    subprocess.call("export DISPLAY=:0.0", shell=True)
 
 if __name__ == '__main__':
     main()
