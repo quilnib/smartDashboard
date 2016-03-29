@@ -9,7 +9,7 @@ io.setup(pir_pin, io.IN)
 lastMotionTime = time.time()
 lastRefreshTime = time.time()
 refreshInterval = 300 #refresh every 5 minutes
-sleepInterval = 30 #turn the screen off after 30-seconds of inactivity
+sleepInterval = 10 #turn the screen off after 10-seconds of inactivity
 
 def main():
     global lastMotionTime
@@ -27,19 +27,19 @@ def main():
             if not isMonitorRunning():
                 wakeScreen()
             #if the screen has been on for more than 5-minutes, refresh
-            if (lastRefreshTime + refreshInterval) < time.time():
-                refreshScreen()
+            #if (lastRefreshTime + refreshInterval) < time.time():
+            #    refreshScreen()
                 #lastRefreshTime = time.time()
         else:
             print("no movement registered")
             #if the screen is on, and there has been no activity for a period of time, turn off screen
             if (lastMotionTime + sleepInterval)< time.time() and isMonitorRunning():
                 sleepScreen()
-        time.sleep(5.0)
+        time.sleep(1.0)
 
 
 def launchBrowser():
-    setDisplay()    
+    #setDisplay()    
     subprocess.call("bash /home/pi/Documents/smartDashboard/launchBrowser.sh", shell=True)
 
 def isMonitorRunning():
@@ -52,12 +52,12 @@ def isMonitorRunning():
 
 def wakeScreen():
     print("waking screen")
-    setDisplay()
+    #setDisplay()
     subprocess.call("bash /home/pi/Documents/smartDashboard/wakeMonitor.sh", shell=True)
 
 def sleepScreen():
     print("sleeping screen")
-    setDisplay()
+    #setDisplay()
     subprocess.call("bash /home/pi/Documents/smartDashboard/sleepMonitor.sh", shell=True)
 
 def refreshScreen():
