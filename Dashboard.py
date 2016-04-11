@@ -4,7 +4,10 @@ import RPi.GPIO as io
 io.setmode(io.BCM)
 
 pir_pin = 18
+fet_pin = 23
 io.setup(pir_pin, io.IN)
+io.setup(fet_pin, io.OUT)
+io.output(fet_pin, False)
 
 lastMotionTime = time.time()
 lastRefreshTime = time.time()
@@ -15,7 +18,7 @@ def main():
     global lastMotionTime
     global lastRefreshTime
 
-    setDisplay()
+    #setDisplay()
     launchBrowser()
 
     time.sleep(10.0)#let the browser finish launching before checking for activity
@@ -24,8 +27,9 @@ def main():
             print("The infrared sensor was triggered")
             lastMotionTime = time.time()
             #if the screen is off, turn it on
-            if not isMonitorRunning():
-                wakeScreen()
+            #if not isMonitorRunning():
+            #    wakeScreen()
+            wakeScreen()
             #if the screen has been on for more than 5-minutes, refresh
             #if (lastRefreshTime + refreshInterval) < time.time():
             #    refreshScreen()
@@ -33,7 +37,7 @@ def main():
         else:
             print("no movement registered")
             #if the screen is on, and there has been no activity for a period of time, turn off screen
-            if (lastMotionTime + sleepInterval)< time.time() and isMonitorRunning():
+            if (lastMotionTime + sleepInterval)< time.time(): #and isMonitorRunning():
                 sleepScreen()
         time.sleep(1.0)
 
@@ -42,7 +46,7 @@ def launchBrowser():
     #setDisplay()    
     subprocess.call("bash /home/pi/Documents/smartDashboard/launchBrowser.sh", shell=True)
 
-def isMonitorRunning():
+def isMonitorRunning():  #the references to this have been commented out since the Mosfet has been connected
     status = subprocess.check_output("tvservice -s", shell=True).decode("utf-8")
 
     if "TV is off" in status:  #check for a chunk of string specific to the "off" status of the screen
@@ -53,12 +57,14 @@ def isMonitorRunning():
 def wakeScreen():
     print("waking screen")
     #setDisplay()
-    subprocess.call("bash /home/pi/Documents/smartDashboard/wakeMonitor.sh", shell=True)
+    #subprocess.call("bash /home/pi/Documents/smartDashboard/wakeMonitor.sh", shell=True)
+    io.output(fet_pin, True)
 
 def sleepScreen():
     print("sleeping screen")
     #setDisplay()
-    subprocess.call("bash /home/pi/Documents/smartDashboard/sleepMonitor.sh", shell=True)
+    #subprocess.call("bash /home/pi/Documents/smartDashboard/sleepMonitor.sh", shell=True)
+    io.output(fet_pin, False)
 
 def refreshScreen():
     global lastRefreshTime
@@ -70,5 +76,4 @@ def setDisplay():
 
 if __name__ == '__main__':
     main()
-
 
