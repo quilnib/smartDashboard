@@ -4,10 +4,10 @@ import RPi.GPIO as io
 io.setmode(io.BCM)
 
 pir_pin = 18
-fet_pin = 23
+relay_pin = 23
 io.setup(pir_pin, io.IN)
-io.setup(fet_pin, io.OUT)
-io.output(fet_pin, False)
+io.setup(relay_pin, io.OUT)
+io.output(relay_pin, False)
 
 lastMotionTime = time.time()
 lastRefreshTime = time.time()
@@ -27,9 +27,9 @@ def main():
             print("The infrared sensor was triggered")
             lastMotionTime = time.time()
             #if the screen is off, turn it on
-            if not isMonitorRunning():
-                wakeScreen()
-            #wakeScreen()
+            #if not isMonitorRunning():
+                #wakeScreen()
+            wakeScreen()
             #if the screen has been on for more than 5-minutes, refresh
             #if (lastRefreshTime + refreshInterval) < time.time():
             #    refreshScreen()
@@ -57,14 +57,14 @@ def isMonitorRunning():  #the references to this have been commented out since t
 def wakeScreen():
     print("waking screen")
     #setDisplay()
-    subprocess.call("bash /home/pi/Documents/smartDashboard/wakeMonitor.sh", shell=True)
-    #io.output(fet_pin, True)
+    #subprocess.call("bash /home/pi/Documents/smartDashboard/wakeMonitor.sh", shell=True)
+    io.output(relay_pin, True)
 
 def sleepScreen():
     print("sleeping screen")
     #setDisplay()
-    subprocess.call("bash /home/pi/Documents/smartDashboard/sleepMonitor.sh", shell=True)
-    #io.output(fet_pin, False)
+    #subprocess.call("bash /home/pi/Documents/smartDashboard/sleepMonitor.sh", shell=True)
+    io.output(relay_pin, False)
 
 def refreshScreen():
     global lastRefreshTime
