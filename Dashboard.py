@@ -11,12 +11,14 @@ io.output(relay_pin, False)
 
 lastMotionTime = time.time()
 lastRefreshTime = time.time()
+refreshCounter = 0
 refreshInterval = 300 #refresh every 5 minutes
 sleepInterval = 10 #turn the screen off after 10-seconds of inactivity
 
 def main():
     global lastMotionTime
     global lastRefreshTime
+    global refreshCounter
 
     setDisplay()
     launchBrowser()
@@ -26,12 +28,15 @@ def main():
         if io.input(pir_pin):
             print("The infrared sensor was triggered")
             lastMotionTime = time.time()
+            refreshCounter += 1
             #if the screen is off, turn it on
             wakeScreen()
-            #if the screen has been on for more than 5-minutes, refresh
-            if (lastRefreshTime + refreshInterval) < time.time():
+            if (refreshCounter > refreshInterval):
                 refreshScreen()
-                lastRefreshTime = time.time()
+            #if the screen has been on for more than 5-minutes, refresh
+            #if (lastRefreshTime + refreshInterval) < time.time():
+                #refreshScreen()
+                #lastRefreshTime = time.time()
         else:
             print("no movement registered")
             #if the screen is on, and there has been no activity for a period of time, turn off screen
@@ -46,16 +51,20 @@ def launchBrowser():
 
 def wakeScreen():
     print("waking screen")
-    io.output(relay_pin, True)
+    io.output(relay_pin, False)#the logic is inverted for some reason...
 
 def sleepScreen():
+    global refreshCounter
     print("sleeping screen")
-    io.output(relay_pin, False)
+    refreshCounter = 0
+    io.output(relay_pin, True)
 
 def refreshScreen():
     global lastRefreshTime
+    global refreshCounter
     subprocess.call("xte 'key F5'", shell=True)
     lastRefreshTime = time.time()
+    refreshCounter = 0
 
 def setDisplay():
     subprocess.call("export DISPLAY=:0.0", shell=True)
